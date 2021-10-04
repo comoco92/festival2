@@ -1,13 +1,16 @@
-<?
+<?php
 
 // FONCTIONS DE CONNEXION
 
-function connect()
-{
-   $hote="localhost";
-   $login="festival";
-   $mdp="secret";
-   return mysql_connect($hote, $login, $mdp);
+try {
+   $dbh = new PDO('mysql:host=localhost;dbname=festival2', $user, $pass);
+   foreach($dbh->query('SELECT * from FOO') as $row) {
+       print_r($row);
+   }
+   $dbh = null;
+} catch (PDOException $e) {
+   print "Erreur !: " . $e->getMessage() . "<br/>";
+   die();
 }
 
 function selectBase($connexion)
