@@ -1,24 +1,8 @@
-<?
-
-include("_debut.inc.php");
+<?php
+$nomPage = "attribuer une chambre";
+include "_debut.inc.php";
 include("_gestionBase.inc.php"); 
 include("_controlesEtGestionErreurs.inc.php");
-
-// CONNEXION AU SERVEUR MYSQL PUIS SÉLECTION DE LA BASE DE DONNÉES festival
-
-$connexion=connect();
-if (!$connexion)
-{
-   ajouterErreur("Echec de la connexion au serveur MySql");
-   afficherErreurs();
-   exit();
-}
-if (!selectBase($connexion))
-{
-   ajouterErreur("La base de données festival est inexistante ou non accessible");
-   afficherErreurs();
-   exit();
-}
 
 // SÉLECTIONNER LE NOMBRE DE CHAMBRES SOUHAITÉES
 

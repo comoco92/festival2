@@ -6,41 +6,85 @@ Idem pour background-color) */
 /* Style de base pour la page (couleur fond : ocre, couleur texte : noir) */
 .basePage 
 {
-   background-color:#FFDD88;
+   background-color:white;
    color:black;
-   font:11px Arial, Helvetica, sans-serif;
+   font:11px Georgia, "Times New Roman", Times, serif;
 }
 
 /* Style pour le titre (couleur du texte : rouge) */
 .titre 
 {
-   background-color:#FFDD88;
-   color:#F50033;
-   font:30px Arial, Helvetica, sans-serif;
+   background-color:white ;
+   color:#000000;
+   font:30px "fantasy";
    text-align:center;
 }
 
 /* Style pour le texte de 2ème niveau du titre */
 .texteNiveau2
 {
-   font:20px Arial, Helvetica, sans-serif;
+   font:20px Georgia, "Times New Roman", Times, serif, italic;;
 }
 
 /* Style pour le texte de la page d'accueil (couleur : bleu foncé avec mise en
 gras et en italique) */
 .texteAccueil
 {
-   background-color:#FFDD88;
-   color:#000099;       
+   background-color:#ffffff;
+   color:#000000;       
    font:14px Georgia, "Times New Roman", Times, serif;
-   font-weight:bold;
+   font-weight: 500;
+   text-align:center;
+   
 }
+
+.texteAccueil2
+{
+   background-color:#ffffff;
+   color:#000000;       
+   font:50px "Times New Roman", Times, serif;
+   text-align:center;
+   font-weight: 500;
+}
+
+.texteAccueil3
+{
+   /* background-color:#ffffff; */
+   color:#000000;       
+   font:14px "Times New Roman", Times, serif;
+   font-weight: 500;
+}
+
 
 /* Style pour le texte dans les différentes balises citées */
 td,tr 
 {
-   font:11px Arial, Helvetica, sans-serif;
+   font:11px Georgia, "Times New Roman", Times, serif;
 }
+
+/* Navbar */
+
+.navbar {
+   font:14px Georgia, "Times New Roman", Times, serif;
+   overflow: hidden;
+   width: 100%;
+   line-height: 100px;
+   text-align: right;
+}
+
+.navbar a {
+   /* float: right; */
+   text-align: center;
+   padding: 14px 16px;
+   text-decoration: none;
+   font-size: 17px;
+   padding: 0 20px;
+ }
+
+.navbar img {
+   float: left;
+}
+ 
 
 /* STYLES POUR LES MENUS */
 
@@ -49,21 +93,26 @@ td,tr
 texte centré */
 table.tabMenu td
 {
-   background-color:#DDFDFF;
-   color:black;
+   background-color:hsl(0, 0%, 100%);
+   color:rgb(0, 0, 0);
    border-bottom:1px solid #777777;
-   border-right:1px solid #777777;
-   border-left:1px solid #777777;
-   border-top:1px solid #777777;
-   padding-left:3px;
+   padding: 0 50px;
    width:33%;
-   height:18px;
+   height:100px;
+   font:14px Georgia, "Times New Roman", Times, serif;
    text-align:center;
 } 
 
-/* Style pour les éléments du menu (mise en gras et italique) */ 
-.menu
+a, a:hover, a:visited, a:active
 {
+	color:rgb(0, 0, 0);
+	text-decoration:none;
+}
+
+/* Style pour les éléments du menu (mise en gras et italique) */ 
+.menu1
+{
+   
    font:11px Georgia, "Times New Roman", Times, serif;
    font-weight:bold;
    font-style:italic;
@@ -76,10 +125,10 @@ table.tabMenu td
 espacement de 3x entre la bordure gauche de chaque cellule et le texte */
 table.tabQuadrille td
 {
-   border-bottom:1px solid #777777;
-   border-right:1px solid #777777;
-   border-left:1px solid #777777;
-   border-top:1px #777777;
+   border-bottom:1px solid #000000;
+   border-right:1px solid #000000;
+   border-left:1px solid #000000;
+   border-top:1px #000000;
    padding-left:3px;
 } 
 
@@ -96,7 +145,7 @@ tr.enTeteTabQuad
 quadrillés : fond écru et texte centré */
 tr.ligneTabQuad 
 {
-   background-color:#FFFFE0;
+   background-color:#fdfdfd;
    text-align:center;
    color:black;
 }
@@ -165,3 +214,55 @@ td.reserve
    color:black;
 }
 
+table.cinereousTable {
+   
+   background-color: #f0d6bb;
+   height : 320px;
+   width : 520px;
+ }
+ table.cinereousTable td, table.cinereousTable th {
+   
+   padding: 4px 4px;
+ }
+ table.cinereousTable tbody td {
+   font-size: 13px;
+ }
+ table.cinereousTable tfoot td {
+   font-size: 16px;
+ }
+
+.titre_foot
+{
+   color:#000000;       
+   font:18px "Times New Roman", Times, serif;
+}
+
+.column {
+   float: left; 
+   text-align: center;
+   width: 50%;
+}
+
+.row:after {
+   content: "";
+   display: table;
+   clear: both;
+   
+   padding: 10px;
+}
+
+.title-column
+{
+   color:#000000;       
+   font:18px "Times New Roman", Times, serif;
+   text-align:center;
+   font-weight: 500;
+}
+
+.img-column {
+   width: 80%;
+}
+
+.text-padding {
+   padding: 0 15px;
+}

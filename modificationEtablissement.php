@@ -1,24 +1,9 @@
-<?
-
-include("_debut.inc.php");
+<?php
+$nomPage = "Modification établissment";
+include "_debut.inc.php";
 include("_gestionBase.inc.php"); 
 include("_controlesEtGestionErreurs.inc.php");
 
-// CONNEXION AU SERVEUR MYSQL PUIS SÉLECTION DE LA BASE DE DONNÉES festival
-
-$connexion=connect();
-if (!$connexion)
-{
-   ajouterErreur("Echec de la connexion au serveur MySql");
-   afficherErreurs();
-   exit();
-}
-if (!selectBase($connexion))
-{
-   ajouterErreur("La base de données festival est inexistante ou non accessible");
-   afficherErreurs();
-   exit();
-}
 
 // MODIFIER UN ÉTABLISSEMENT 
 
@@ -34,18 +19,19 @@ $id=$_REQUEST['id'];
 if ($action=='demanderModifEtab')
 {
    $lgEtab=obtenirDetailEtablissement($connexion, $id);
-  
-   $nom=$lgEtab['nom'];
-   $adresseRue=$lgEtab['adresseRue'];
-   $codePostal=$lgEtab['codePostal'];
-   $ville=$lgEtab['ville'];
-   $tel=$lgEtab['tel'];
-   $adresseElectronique=$lgEtab['adresseElectronique'];
-   $type=$lgEtab['type'];
-   $civiliteResponsable=$lgEtab['civiliteResponsable'];
-   $nomResponsable=$lgEtab['nomResponsable'];
-   $prenomResponsable=$lgEtab['prenomResponsable'];
-   $nombreChambresOffertes=$lgEtab['nombreChambresOffertes'];
+   foreach ($lgEtab as $row) {
+      $nom=$row['nom'];
+      $adresseRue=$row['adresseRue'];
+      $codePostal=$row['codePostal'];
+      $ville=$row['ville'];
+      $tel=$row['tel'];
+      $adresseElectronique=$row['adresseElectronique'];
+      $type=$row['type'];
+      $civiliteResponsable=$row['civiliteResponsable'];
+      $nomResponsable=$row['nomResponsable'];
+      $prenomResponsable=$row['prenomResponsable'];
+      $nombreChambresOffertes=$row['nombreChambresOffertes'];
+   }
 }
 else
 {

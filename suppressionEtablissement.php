@@ -1,45 +1,31 @@
-<?
-
-include("_debut.inc.php");
+<?php
+$nomPage = "Supprimer un établissment";
+include "_debut.inc.php";
 include("_gestionBase.inc.php"); 
 include("_controlesEtGestionErreurs.inc.php");
-
-// CONNEXION AU SERVEUR MYSQL PUIS SÉLECTION DE LA BASE DE DONNÉES festival
-
-$connexion=connect();
-if (!$connexion)
-{
-   ajouterErreur("Echec de la connexion au serveur MySql");
-   afficherErreurs();
-   exit();
-}
-if (!selectBase($connexion))
-{
-   ajouterErreur("La base de données festival est inexistante ou non accessible");
-   afficherErreurs();
-   exit();
-}
 
 // SUPPRIMER UN ÉTABLISSEMENT 
 
 $id=$_REQUEST['id'];  
 
 $lgEtab=obtenirDetailEtablissement($connexion, $id);
-$nom=$lgEtab['nom'];
+foreach ($lgEtab as $row) {
+   $nom=$row['nom'];
+}
 
-// Cas 1ère étape (on vient de listeEtablissements.php)
+// Cas 1ère étape (on vient de gestionEquipe.php)
 
 if ($_REQUEST['action']=='demanderSupprEtab')    
 {
    echo "
    <br><center><h5>Souhaitez-vous vraiment supprimer l'établissement $nom ? 
    <br><br>
-   <a href='suppressionEtablissement.php?action=validerSupprEtab&amp;id=$id'>
+   <a href='suppressionEquipe.php?action=validerSupprEtab&amp;id=$id'>
    Oui</a>&nbsp; &nbsp; &nbsp; &nbsp;
-   <a href='listeEtablissements.php?'>Non</a></h5></center>";
+   <a href='gestionEquipe.php?'>Non</a></h5></center>";
 }
 
-// Cas 2ème étape (on vient de suppressionEtablissement.php)
+// Cas 2ème étape (on vient de suppressionEquipe.php)
 
 else
 {

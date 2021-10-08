@@ -2,60 +2,53 @@
 
 // FONCTIONS DE CONNEXION
 
-try {
-   $dbh = new PDO('mysql:host=localhost;dbname=festival2', $user, $pass);
-   foreach($dbh->query('SELECT * from FOO') as $row) {
-       print_r($row);
-   }
-   $dbh = null;
-} catch (PDOException $e) {
-   print "Erreur !: " . $e->getMessage() . "<br/>";
-   die();
-}
+   $hote="localhost";
+   $login="festival";
+   $mdp="secret";
 
-function selectBase($connexion)
-{
-   $bd="festival";
-   $query="SET CHARACTER SET utf8";
-   // Modification du jeu de caractères de la connexion
-   $res=mysql_query($query, $connexion); 
-   $ok=mysql_select_db($bd, $connexion);
-   return $ok;
-}
+   try{
+      $connexion = new PDO("mysql:host=$hote;dbname=festival", $login, $mdp);
+      $connexion->exec("set names utf8");
+      return $connexion;
+   }
+   catch(PDOException $e){
+      echo "Erreur :" . $e->getMessage();
+      die();
+   }
 
 // FONCTIONS DE GESTION DES ÉTABLISSEMENTS
 
 function obtenirReqEtablissements()
 {
-   $req="select id, nom from Etablissement order by id";
+   $req="SELECT id, nom from Etablissement order by id";
    return $req;
 }
 
 function obtenirReqEtablissementsOffrantChambres()
 {
-   $req="select id, nom, nombreChambresOffertes from Etablissement where 
+   $req="SELECT id, nom, nombreChambresOffertes from Etablissement where 
          nombreChambresOffertes!=0 order by id";
    return $req;
 }
 
 function obtenirReqEtablissementsAyantChambresAttribuées()
 {
-   $req="select distinct id, nom, nombreChambresOffertes from Etablissement, 
+   $req="SELECT distinct id, nom, nombreChambresOffertes from Etablissement, 
          Attribution where id = idEtab order by id";
    return $req;
 }
 
 function obtenirDetailEtablissement($connexion, $id)
 {
-   $req="select * from Etablissement where id='$id'";
-   $rsEtab=mysql_query($req, $connexion);
-   return mysql_fetch_array($rsEtab);
+   $req="SELECT * from Etablissement where id='$id'";
+   $rsEtab=$connexion->query($req);
+   return $rsEtab->fetchAll();
 }
 
 function supprimerEtablissement($connexion, $id)
 {
-   $req="delete from Etablissement where id='$id'";
-   mysql_query($req, $connexion);
+   $req="DELETE from Etablissement where id='$id'";
+   $connexion->exec($req);
 }
  
 function modifierEtablissement($connexion, $id, $nom, $adresseRue, $codePostal, 
@@ -70,14 +63,14 @@ function modifierEtablissement($connexion, $id, $nom, $adresseRue, $codePostal,
    $nomResponsable=str_replace("'","''", $nomResponsable);
    $prenomResponsable=str_replace("'","''", $prenomResponsable);
   
-   $req="update Etablissement set nom='$nom',adresseRue='$adresseRue',
+   $req="UPDATE Etablissement set nom='$nom',adresseRue='$adresseRue',
          codePostal='$codePostal',ville='$ville',tel='$tel',
          adresseElectronique='$adresseElectronique',type='$type',
          civiliteResponsable='$civiliteResponsable',nomResponsable=
          '$nomResponsable',prenomResponsable='$prenomResponsable',
          nombreChambresOffertes='$nombreChambresOffertes' where id='$id'";
    
-   mysql_query($req, $connexion);
+   $connexion->exec($req);
 }
 
 function creerEtablissement($connexion, $id, $nom, $adresseRue, $codePostal, 
@@ -92,20 +85,20 @@ function creerEtablissement($connexion, $id, $nom, $adresseRue, $codePostal,
    $nomResponsable=str_replace("'","''", $nomResponsable);
    $prenomResponsable=str_replace("'","''", $prenomResponsable);
    
-   $req="insert into Etablissement values ('$id', '$nom', '$adresseRue', 
+   $req="INSERT into Etablissement values ('$id', '$nom', '$adresseRue', 
          '$codePostal', '$ville', '$tel', '$adresseElectronique', '$type', 
          '$civiliteResponsable', '$nomResponsable', '$prenomResponsable',
          '$nombreChambresOffertes')";
    
-   mysql_query($req, $connexion);
+   $connexion->query($req);
 }
 
 
 function estUnIdEtablissement($connexion, $id)
 {
-   $req="select * from Etablissement where id='$id'";
-   $rsEtab=mysql_query($req, $connexion);
-   return mysql_fetch_array($rsEtab);
+   $req="SELECT * from Etablissement where id='$id'";
+   $rsEtab=$connexion->query($req);
+   return $rsEtab->fetchAll();
 }
 
 function estUnNomEtablissement($connexion, $mode, $id, $nom)
@@ -116,30 +109,30 @@ function estUnNomEtablissement($connexion, $mode, $id, $nom)
    // le même nom
    if ($mode=='C')
    {
-      $req="select * from Etablissement where nom='$nom'";
+      $req="SELECT * from Etablissement where nom='$nom'";
    }
    else
    {
-      $req="select * from Etablissement where nom='$nom' and id!='$id'";
+      $req="SELECT * from Etablissement where nom='$nom' and id!='$id'";
    }
-   $rsEtab=mysql_query($req, $connexion);
-   return mysql_fetch_array($rsEtab);
+   $rsEtab=$connexion->query($req);
+   return $rsEtab->fetchAll();
 }
 
 function obtenirNbEtab($connexion)
 {
-   $req="select count(*) as nombreEtab from Etablissement";
-   $rsEtab=mysql_query($req, $connexion);
-   $lgEtab=mysql_fetch_array($rsEtab);
+   $req="SELECT count(*) as nombreEtab from Etablissement";
+   $rsEtab=mysqli_query($connexion, $req);
+   $lgEtab=mysqli_fetch_array($rsEtab);
    return $lgEtab["nombreEtab"];
 }
 
 function obtenirNbEtabOffrantChambres($connexion)
 {
-   $req="select count(*) as nombreEtabOffrantChambres from Etablissement where 
+   $req="SELECT count(*) as nombreEtabOffrantChambres from Etablissement where 
          nombreChambresOffertes!=0";
-   $rsEtabOffrantChambres=mysql_query($req, $connexion);
-   $lgEtabOffrantChambres=mysql_fetch_array($rsEtabOffrantChambres);
+   $rsEtabOffrantChambres=$connexion->query($req);
+   $lgEtabOffrantChambres=$rsEtabOffrantChambres->fetch();
    return $lgEtabOffrantChambres["nombreEtabOffrantChambres"];
 }
 
@@ -156,15 +149,15 @@ function estModifOffreCorrecte($connexion, $idEtab, $nombreChambres)
 
 function obtenirReqIdNomGroupesAHeberger()
 {
-   $req="select id, nom from Groupe where hebergement='O' order by id";
+   $req="SELECT id, nom from Groupe where hebergement='O' order by id";
    return $req;
 }
 
 function obtenirNomGroupe($connexion, $id)
 {
-   $req="select nom from Groupe where id='$id'";
-   $rsGroupe=mysql_query($req, $connexion);
-   $lgGroupe=mysql_fetch_array($rsGroupe);
+   $req="SELECT nom from Groupe where id='$id'";
+   $rsGroupe=$connexion->query($req);
+   $lgGroupe=$rsGroupe->fetch();
    return $lgGroupe["nom"];
 }
 
@@ -173,47 +166,51 @@ function obtenirNomGroupe($connexion, $id)
 // Teste la présence d'attributions pour l'établissement transmis    
 function existeAttributionsEtab($connexion, $id)
 {
-   $req="select * From Attribution where idEtab='$id'";
-   $rsAttrib=mysql_query($req, $connexion);
-   return mysql_fetch_array($rsAttrib);
+   $req="SELECT * From Attribution where idEtab='$id'";
+   $rsAttrib=$connexion->query($req);
+   return $rsAttrib->fetchAll();
 }
 
 // Retourne le nombre de chambres occupées pour l'id étab transmis
 function obtenirNbOccup($connexion, $idEtab)
 {
-   $req="select IFNULL(sum(nombreChambres), 0) as totalChambresOccup from
+   $req="SELECT IFNULL(sum(nombreChambres), 0) as totalChambresOccup from
         Attribution where idEtab='$idEtab'";
-   $rsOccup=mysql_query($req, $connexion);
-   $lgOccup=mysql_fetch_array($rsOccup);
-   return $lgOccup["totalChambresOccup"];
+   $rsOccup=$connexion->query($req);
+   $lgOccup=$rsOccup->fetchAll();
+   foreach ($lgOccup as $row) {
+      return $row["totalChambresOccup"];
+   }
 }
 
 // Met à jour (suppression, modification ou ajout) l'attribution correspondant à
 // l'id étab et à l'id groupe transmis
 function modifierAttribChamb($connexion, $idEtab, $idGroupe, $nbChambres)
 {
-   $req="select count(*) as nombreAttribGroupe from Attribution where idEtab=
+   $req="SELECT count(*) as nombreAttribGroupe from Attribution where idEtab=
         '$idEtab' and idGroupe='$idGroupe'";
-   $rsAttrib=mysql_query($req, $connexion);
-   $lgAttrib=mysql_fetch_array($rsAttrib);
+   $rsAttrib=$connexion->query($req);
+   $lgAttrib=$rsAttrib->fetch();
    if ($nbChambres==0)
-      $req="delete from Attribution where idEtab='$idEtab' and idGroupe='$idGroupe'";
+      $req="DELETE from Attribution where idEtab='$idEtab' and idGroupe='$idGroupe'";
    else
    {
       if ($lgAttrib["nombreAttribGroupe"]!=0)
-         $req="update Attribution set nombreChambres=$nbChambres where idEtab=
+         $req="UPDATE Attribution set nombreChambres=$nbChambres where idEtab=
               '$idEtab' and idGroupe='$idGroupe'";
       else
-         $req="insert into Attribution values('$idEtab','$idGroupe', $nbChambres)";
+         $req="INSERT into Attribution values('$idEtab','$idGroupe', $nbChambres)";
    }
-   mysql_query($req, $connexion);
+   $connexion->query($req);
 }
 
 // Retourne la requête permettant d'obtenir les id et noms des groupes affectés
 // dans l'établissement transmis
+
+// Suppresion de selectbase car ne sert à rien.
 function obtenirReqGroupesEtab($id)
 {
-   $req="select distinct id, nom from Groupe, Attribution where 
+   $req="SELECT distinct id, nom from Groupe, Attribution where 
         Attribution.idGroupe=Groupe.id and idEtab='$id'";
    return $req;
 }
@@ -222,14 +219,25 @@ function obtenirReqGroupesEtab($id)
 // et l'id groupe transmis
 function obtenirNbOccupGroupe($connexion, $idEtab, $idGroupe)
 {
-   $req="select nombreChambres From Attribution where idEtab='$idEtab'
+   $req="SELECT nombreChambres From Attribution where idEtab='$idEtab'
         and idGroupe='$idGroupe'";
-   $rsAttribGroupe=mysql_query($req, $connexion);
-   if ($lgAttribGroupe=mysql_fetch_array($rsAttribGroupe))
+   $rsAttribGroupe=$connexion->query($req);
+   if ($lgAttribGroupe=$rsAttribGroupe->fetch())
       return $lgAttribGroupe["nombreChambres"];
    else
       return 0;
 }
 
-?>
+function obtenirGroupe()
+{
+   $req="SELECT * from Groupe"; 
+   return $req;
+}
 
+function obtenirdetailGroupe($id)
+  {
+   $req="SELECT * from Groupe where id='$id' ";
+   return $req;
+  }
+
+?>
