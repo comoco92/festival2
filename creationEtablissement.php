@@ -1,8 +1,18 @@
 <?php
-$nomPage = "Création établissement";
+
 include("_debut.inc.php");
 include("_gestionBase.inc.php"); 
 include("_controlesEtGestionErreurs.inc.php");
+
+// CONNEXION AU SERVEUR MYSQL PUIS SÉLECTION DE LA BASE DE DONNÉES festival
+
+$connexion=connect();
+if (!$connexion)
+{
+   ajouterErreur("Echec de la connexion au serveur MySql");
+   afficherErreurs();
+   exit();
+}
 
 // CRÉER UN ÉTABLISSEMENT 
 
@@ -44,11 +54,11 @@ else
    $prenomResponsable=$_REQUEST['prenomResponsable'];
    $nombreChambresOffertes=$_REQUEST['nombreChambresOffertes'];
 
-   verifierDonneesEtabC($connexion, $id, $nom, $adresseRue, $codePostal, $ville,  
+   verifierDonneesEtabC($dbh, $id, $nom, $adresseRue, $codePostal, $ville, 
                         $tel, $nomResponsable, $nombreChambresOffertes);      
    if (nbErreurs()==0)
    {        
-      creerEtablissement($connexion, $id, $nom, $adresseRue, $codePostal, $ville,  
+      creerEtablissement($dbh, $id, $nom, $adresseRue, $codePostal, $ville,  
                          $tel, $adresseElectronique, $type, $civiliteResponsable, 
                          $nomResponsable, $prenomResponsable, $nombreChambresOffertes);
    }

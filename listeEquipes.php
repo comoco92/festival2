@@ -14,7 +14,7 @@ if (!$connexion)
    exit();
 }
 
-// AFFICHER L'ENSEMBLE DES ÉTABLISSEMENTS
+// AFFICHER L'ENSEMBLE DES GROUPES
 // CETTE PAGE CONTIENT UN TABLEAU CONSTITUÉ D'1 LIGNE D'EN-TÊTE ET D'1 LIGNE PAR
 // ÉTABLISSEMENT
 
@@ -22,14 +22,14 @@ echo "
 <table width='70%' cellspacing='0' cellpadding='0' align='center' 
 class='tabNonQuadrille'>
    <tr class='enTeteTabNonQuad'>
-      <td colspan='4'>Etablissements</td>
+      <td colspan='4'>Groupes</td>
    </tr>";
 
-   $req=obtenirReqEtablissements();
-   $rsEtab=$dbh->query($req);
-   $lgEtab=$rsEtab->fetchAll(PDO::FETCH_ASSOC);
-   // BOUCLE SUR LES ÉTABLISSEMENTS
-   foreach ($lgEtab as $row)
+   $req=obtenirReqGroupes();
+   $rsGroupe=$dbh->query($req);
+   $lgGroupe=$rsGroupe->fetchAll(PDO::FETCH_ASSOC);
+   // BOUCLE SUR LES EQUIPES
+   foreach ($lgGroupe as $row)
    {
       $id=$row['id'];
       $nom=$row['nom'];
@@ -38,37 +38,35 @@ class='tabNonQuadrille'>
          <td width='52%'>$nom</td>
          
          <td width='16%' align='center'> 
-         <a href='detailEtablissement.php?id=$id'>
+         <a href='detailGroupe.php?id=$id'>
          Voir détail</a></td>
          
          <td width='16%' align='center'> 
-         <a href='modificationEtablissement.php?action=demanderModifEtab&amp;id=$id'>
+         <a href='modificationGroupe.php?action=demanderModifGroupe&amp;id=$id'>
          Modifier</a></td>";
       	
          // S'il existe déjà des attributions pour l'établissement, il faudra
          // d'abord les supprimer avant de pouvoir supprimer l'établissement
-			if (!existeAttributionsEtab($dbh, $id))
+			if (!existeAttributionsGroupes($dbh, $id))
 			{
             echo "
             <td width='16%' align='center'> 
-            <a href='suppressionEtablissement.php?action=demanderSupprEtab&amp;id=$id'>
+            <a href='suppressionGroupe.php?action=demanderSupprGroupe&amp;id=$id'>
             Supprimer</a></td>";
          }
          else
          {
-            $idEtab=$id;
-            $req2=obtenirNbOccup($dbh, $idEtab);
             echo "
-            <td width='16%'> ($req2 attributions) </td>";          
+            <td width='16%'>&nbsp; </td>";          
 			}
 			echo "
       </tr>";
-      $lgEtab=$rsEtab->fetchAll(PDO::FETCH_ASSOC);
+      $lgGroupe=$rsGroupe->fetchAll(PDO::FETCH_ASSOC);
    }  
    echo "
    <tr class='ligneTabNonQuad'>
-      <td colspan='4'><a href='creationEtablissement.php?action=demanderCreEtab'>
-      Création d'un établissement</a ></td>
+      <td colspan='4'><a href='creationGroupe.php?action=demanderCreGroupe'>
+      Création d'un groupe</a ></td>
   </tr>
 </table>";
 

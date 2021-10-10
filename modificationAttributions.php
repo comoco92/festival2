@@ -1,8 +1,18 @@
 <?php
-$nomPage = "Modification des attributions";
-include "_debut.inc.php";
+
+include("_debut.inc.php");
 include("_gestionBase.inc.php"); 
 include("_controlesEtGestionErreurs.inc.php");
+
+// CONNEXION AU SERVEUR MYSQL PUIS SÉLECTION DE LA BASE DE DONNÉES festival
+
+$connexion=connect();
+if (!$connexion)
+{
+   ajouterErreur("Echec de la connexion au serveur MySql");
+   afficherErreurs();
+   exit();
+}
 
 // EFFECTUER OU MODIFIER LES ATTRIBUTIONS POUR L'ENSEMBLE DES ÉTABLISSEMENTS
 
@@ -12,7 +22,7 @@ include("_controlesEtGestionErreurs.inc.php");
 
 // Recherche du nombre d'établissements offrant des chambres pour le 
 // dimensionnement des colonnes
-$nbEtabOffrantChambres=obtenirNbEtabOffrantChambres($connexion);
+$nbEtabOffrantChambres=obtenirNbEtabOffrantChambres($dbh);
 $nb=$nbEtabOffrantChambres+1;
 // Détermination du pourcentage de largeur des colonnes "établissements"
 $pourcCol=50/$nbEtabOffrantChambres;
@@ -27,7 +37,7 @@ if ($action=='validerModifAttrib')
    $idEtab=$_REQUEST['idEtab'];
    $idGroupe=$_REQUEST['idGroupe'];
    $nbChambres=$_REQUEST['nbChambres'];
-   modifierAttribChamb($connexion, $idEtab, $idGroupe, $nbChambres);
+   modifierAttribChamb($dbh, $idEtab, $idGroupe, $nbChambres);
 }
 
 echo "
@@ -46,24 +56,24 @@ class='tabQuadrille'>";
       <td>&nbsp;</td>";
       
    $req=obtenirReqEtablissementsOffrantChambres();
-   $rsEtab=$connexion->query($req);
-   $lgEtab=$rsEtab->fetch();
+   $rsEtab=$dbh->query($req);
+   $lgEtab=$rsEtab->fetchAll(PDO::FETCH_ASSOC);
 
    // Boucle sur les établissements (pour afficher le nom de l'établissement et 
    // le nombre de chambres encore disponibles)
-   while ($lgEtab!=FALSE)
+   foreach ($lgEtab as $row)
    {
-      $idEtab=$lgEtab["id"];
-      $nom=$lgEtab["nom"];
-      $nbOffre=$lgEtab["nombreChambresOffertes"];
-      $nbOccup=obtenirNbOccup($connexion, $idEtab);
+      $idEtab=$row["id"];
+      $nom=$row["nom"];
+      $nbOffre=$row["nombreChambresOffertes"];
+      $nbOccup=obtenirNbOccup($dbh, $idEtab);
                     
       // Calcul du nombre de chambres libres
       $nbChLib = $nbOffre - $nbOccup;
       echo "
       <td valign='top' width='$pourcCol%'><i>Disponibilités : $nbChLib </i> <br>
       $nom </td>";
-      $lgEtab=$rsEtab->fetch();
+      $lgEtab=$rsEtab->fetchAll(PDO::FETCH_ASSOC);
    }
    echo "
    </tr>"; 
@@ -72,34 +82,35 @@ class='tabQuadrille'>";
    // CHAMBRES ATTRIBUÉES ET LES LIENS POUR EFFECTUER OU MODIFIER LES ATTRIBUTIONS
          
    $req=obtenirReqIdNomGroupesAHeberger();
-   $rsGroupe=$connexion->query($req);
-   $lgGroupe=$rsGroupe->fetch();
+   $rsGroupe=$dbh->query($req);
+   $lgGroupe=$rsGroupe->fetchAll(PDO::FETCH_ASSOC);
+   
          
    // BOUCLE SUR LES GROUPES À HÉBERGER 
-   while ($lgGroupe!=FALSE)
+   foreach ($lgGroupe as $grow)
    {
-      $idGroupe=$lgGroupe['id'];
-      $nom=$lgGroupe['nom'];
+      $idGroupe=$grow['id'];
+      $nom=$grow['nom'];
       echo "
       <tr class='ligneTabQuad'>
          <td width='25%'>$nom</td>";
       $req=obtenirReqEtablissementsOffrantChambres();
-      $rsEtab=$connexion->query($req);
-      $lgEtab=$rsEtab->fetch();
+      $rsEtab=$dbh->query($req);
+      $lgEtab=$rsEtab->fetchAll(PDO::FETCH_ASSOC);
            
       // BOUCLE SUR LES ÉTABLISSEMENTS
-      while ($lgEtab!=FALSE)
+      foreach ($lgEtab as $row)
       {
-         $idEtab=$lgEtab["id"];
-         $nbOffre=$lgEtab["nombreChambresOffertes"];
-         $nbOccup=obtenirNbOccup($connexion, $idEtab);
+         $idEtab=$row["id"];
+         $nbOffre=$row["nombreChambresOffertes"];
+         $nbOccup=obtenirNbOccup($dbh, $idEtab);
                    
          // Calcul du nombre de chambres libres
          $nbChLib = $nbOffre - $nbOccup;
                   
          // On recherche si des chambres ont déjà été attribuées à ce groupe
          // dans cet établissement
-         $nbOccupGroupe=obtenirNbOccupGroupe($connexion, $idEtab, $idGroupe);
+         $nbOccupGroupe=obtenirNbOccupGroupe($dbh, $idEtab, $idGroupe);
          
          // Cas où des chambres ont déjà été attribuées à ce groupe dans cet
          // établissement
@@ -132,9 +143,9 @@ class='tabQuadrille'>";
                echo "<td class='reserveSiLien'>&nbsp;</td>";
             }
          }    
-         $lgEtab=$rsEtab->fetch();
+         $lgEtab=$rsEtab->fetchAll(PDO::FETCH_ASSOC);
       } // Fin de la boucle sur les établissements    
-      $lgGroupe=$rsGroupe->fetch();  
+      $lgGroupe=$rsGroupe->fetchAll(PDO::FETCH_ASSOC);
    } // Fin de la boucle sur les groupes à héberger
 echo "
 </table>"; // Fin du tableau principal

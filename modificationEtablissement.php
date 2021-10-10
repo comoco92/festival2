@@ -1,9 +1,18 @@
 <?php
-$nomPage = "Modification établissment";
-include "_debut.inc.php";
+
+include("_debut.inc.php");
 include("_gestionBase.inc.php"); 
 include("_controlesEtGestionErreurs.inc.php");
 
+// CONNEXION AU SERVEUR MYSQL PUIS SÉLECTION DE LA BASE DE DONNÉES festival
+
+$connexion=connect();
+if (!$connexion)
+{
+   ajouterErreur("Echec de la connexion au serveur MySql");
+   afficherErreurs();
+   exit();
+}
 
 // MODIFIER UN ÉTABLISSEMENT 
 
@@ -18,20 +27,19 @@ $id=$_REQUEST['id'];
 // affiche les valeurs précédemment contenues dans le formulaire
 if ($action=='demanderModifEtab')
 {
-   $lgEtab=obtenirDetailEtablissement($connexion, $id);
-   foreach ($lgEtab as $row) {
-      $nom=$row['nom'];
-      $adresseRue=$row['adresseRue'];
-      $codePostal=$row['codePostal'];
-      $ville=$row['ville'];
-      $tel=$row['tel'];
-      $adresseElectronique=$row['adresseElectronique'];
-      $type=$row['type'];
-      $civiliteResponsable=$row['civiliteResponsable'];
-      $nomResponsable=$row['nomResponsable'];
-      $prenomResponsable=$row['prenomResponsable'];
-      $nombreChambresOffertes=$row['nombreChambresOffertes'];
-   }
+   $lgEtab=obtenirDetailEtablissement($dbh, $id);
+  
+   $nom=$lgEtab['nom'];
+   $adresseRue=$lgEtab['adresseRue'];
+   $codePostal=$lgEtab['codePostal'];
+   $ville=$lgEtab['ville'];
+   $tel=$lgEtab['tel'];
+   $adresseElectronique=$lgEtab['adresseElectronique'];
+   $type=$lgEtab['type'];
+   $civiliteResponsable=$lgEtab['civiliteResponsable'];
+   $nomResponsable=$lgEtab['nomResponsable'];
+   $prenomResponsable=$lgEtab['prenomResponsable'];
+   $nombreChambresOffertes=$lgEtab['nombreChambresOffertes'];
 }
 else
 {
@@ -47,11 +55,11 @@ else
    $prenomResponsable=$_REQUEST['prenomResponsable'];
    $nombreChambresOffertes=$_REQUEST['nombreChambresOffertes'];
 
-   verifierDonneesEtabM($connexion, $id, $nom, $adresseRue, $codePostal, $ville,  
+   verifierDonneesEtabM($dbh, $id, $nom, $adresseRue, $codePostal, $ville,  
                         $tel, $nomResponsable, $nombreChambresOffertes);      
    if (nbErreurs()==0)
    {        
-      modifierEtablissement($connexion, $id, $nom, $adresseRue, $codePostal, $ville, 
+      modifierEtablissement($dbh, $id, $nom, $adresseRue, $codePostal, $ville, 
                             $tel, $adresseElectronique, $type, $civiliteResponsable, 
                             $nomResponsable, $prenomResponsable, $nombreChambresOffertes);
    }

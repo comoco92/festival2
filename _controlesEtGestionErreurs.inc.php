@@ -26,7 +26,7 @@ function estChiffresOuEtLettres($valeur)
 
 // Fonction qui vérifie la saisie lors de la modification d'un établissement. 
 // Pour chaque champ non valide, un message est ajouté à la liste des erreurs
-function verifierDonneesEtabM($connexion, $id, $nom, $adresseRue, $codePostal, 
+function verifierDonneesEtabM($dbh, $id, $nom, $adresseRue, $codePostal, 
                               $ville, $tel, $nomResponsable, $nombreChambresOffertes)
 {
    if ($nom=="" || $adresseRue=="" || $codePostal=="" || $ville=="" || 
@@ -34,7 +34,7 @@ function verifierDonneesEtabM($connexion, $id, $nom, $adresseRue, $codePostal,
    {
       ajouterErreur("Chaque champ suivi du caractère * est obligatoire");
    }
-   if ($nom!="" && estUnNomEtablissement($connexion, 'M', $id, $nom))
+   if ($nom!="" && estUnNomEtablissement($dbh, 'M', $id, $nom))
    {
       ajouterErreur("L'établissement $nom existe déjà");
    }
@@ -43,7 +43,7 @@ function verifierDonneesEtabM($connexion, $id, $nom, $adresseRue, $codePostal,
       ajouterErreur("Le code postal doit comporter 5 chiffres");   
    }
    if ($nombreChambresOffertes!="" && (!estEntier($nombreChambresOffertes) ||
-       !estModifOffreCorrecte($connexion, $id, $nombreChambresOffertes)))
+       !estModifOffreCorrecte($dbh, $id, $nombreChambresOffertes)))
    {
       ajouterErreur
       ("La valeur de l'offre est non entière ou inférieure aux attributions effectuées");
@@ -52,7 +52,7 @@ function verifierDonneesEtabM($connexion, $id, $nom, $adresseRue, $codePostal,
 
 // Fonction qui vérifie la saisie lors de la création d'un établissement. 
 // Pour chaque champ non valide, un message est ajouté à la liste des erreurs
-function verifierDonneesEtabC($connexion, $id, $nom, $adresseRue, $codePostal, 
+function verifierDonneesEtabC($dbh, $id, $nom, $adresseRue, $codePostal, 
                               $ville, $tel, $nomResponsable, $nombreChambresOffertes)
 {
    if ($id=="" || $nom=="" || $adresseRue=="" || $codePostal=="" || $ville==""
@@ -71,13 +71,13 @@ function verifierDonneesEtabC($connexion, $id, $nom, $adresseRue, $codePostal,
       }
       else
       {
-         if (estUnIdEtablissement($connexion, $id))
+         if (estUnIdEtablissement($dbh, $id))
          {
             ajouterErreur("L'établissement $id existe déjà");
          }
       }
    }
-   if ($nom!="" && estUnNomEtablissement($connexion, 'C', $id, $nom))
+   if ($nom!="" && estUnNomEtablissement($dbh, 'C', $id, $nom))
    {
       ajouterErreur("L'établissement $nom existe déjà");
    }
@@ -91,6 +91,29 @@ function verifierDonneesEtabC($connexion, $id, $nom, $adresseRue, $codePostal,
    }
 }
 
+function verifierDonneesGroupeM($dbh, $id, $nom, $idres, $adressePostale, $nbpersonnes,  
+                        $nomPays, $hebergement)    
+{
+   if ($nom=="" || $nbpersonnes=="" || 
+       $nomPays=="" || $hebergement=="")
+   {
+      ajouterErreur("Chaque champ suivi du caractère * est obligatoire");
+   }
+}
+
+function verifierDonneesGroupeC($dbh, $id, $nom, $idres, $adressePostale, $nbpersonnes,  
+                        $nomPays, $hebergement)    
+{
+   if ($nom=="" || $nbpersonnes=="" || 
+       $nomPays=="" || $hebergement=="")
+   {
+      ajouterErreur("Chaque champ suivi du caractère * est obligatoire");
+   }
+   if ($nom!="" && estUnNomGroupe($dbh, $id, $nom))
+   {
+      ajouterErreur("Le groupe $nom existe déjà");
+   }
+}
 // FONCTIONS DE GESTION DES ERREURS
 
 function ajouterErreur($msg)
