@@ -2,7 +2,9 @@
 $nomPage = "Accueil";
 include "_debut.inc.php";
 
+
 ?>
+
 
 <div>
    <div class="texteAccueil2">
